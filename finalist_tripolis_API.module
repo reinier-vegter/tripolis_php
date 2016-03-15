@@ -1,0 +1,12 @@
+<?php
+/**
+ * @file
+ * Module file.
+ *
+ * All class files are included through the info file, and new classes
+ * should be added to the info file.
+ *
+ * Be aware that this module is also used as standalone software,
+ * so it should not include or use Drupal functions!
+ * Do anything Drupal related in a separate module.
+ */

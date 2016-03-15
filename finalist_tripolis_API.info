@@ -1,0 +1,11 @@
+name = Finalist Tripolis API
+description = "Provides API classes to interact with Tripolis"
+core = 7.x
+
+files[] = class/TripolisAPI.class.php
+files[] = class/TripolisArticleService.class.php
+files[] = class/TripolisArticleFieldService.class.php
+files[] = class/TripolisImageService.class.php
+files[] = class/TripolisContactGroupService.php
+files[] = class/TripolisContactService.php
+files[] = class/TripolisContactDatabaseService.php
