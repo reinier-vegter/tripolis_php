@@ -18,8 +18,13 @@ Current functionality:
  Read the classes to be sure what's in there.
  
  Have phun.
- 
-# Examples:
+
+# Notes
+ - Each ...Service object needs a client-name, username and password.
+ - The setDbId() method requires a database ID. At the time of writing, these can be found to log into Tripolis,
+   and use a browser-inspector on the database-select-list, to find the corresponding ID. 
+
+# Examples
 
       $tripolis = new TripolisContactService($auth['client'], $auth['username'], $auth['password']);
       $tripolis->setDbId($auth['db']);
