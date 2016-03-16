@@ -9,3 +9,4 @@ files[] = class/TripolisImageService.class.php
 files[] = class/TripolisContactGroupService.php
 files[] = class/TripolisContactService.php
 files[] = class/TripolisContactDatabaseService.php
+files[] = class/TripolisPublishingService.class.php
