@@ -143,7 +143,7 @@ class TripolisAPISoap {
    * @return array
    *   Merged array of all results.
    */
-  public function pagedSoapCall($method, array $param, $pagesize = 20) {
+  public function pagedSoapCall($method, array $param, $pagesize = 400) {
     $merged_result = array();
 
     $call = TRUE;
@@ -238,9 +238,12 @@ class TripolisAPISoap {
    */
   protected function debug($value, $label = '') {
     if ($this->debug) {
+      // @codingStandardsIgnoreStart
+      // Used for debugging.
       if (function_exists('dsm')) {
         dsm($value, $label);
       }
+      // @codingStandardsIgnoreEnd
       elseif (function_exists('drupal_set_message')) {
         // We are loaded inside drupal, don't use debug function in drupal.
         global $user;

@@ -68,10 +68,7 @@ class TripolisImageService extends TripolisAPISoap {
     }
 
     // Corrrect imageType property.
-    // Only this is allowed:
-    // JPEG
-    // PNG
-    // GIF
+    // Only this is allowed: JPEG, PNG, GIF.
     $image_type = strtoupper(pathinfo($path, PATHINFO_EXTENSION));
     if ($image_type == 'JPG') {
       $image_type = 'JPEG';

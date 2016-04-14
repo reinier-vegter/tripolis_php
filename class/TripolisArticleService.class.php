@@ -40,25 +40,107 @@ class TripolisArticleService extends TripolisAPISoap {
       try {
         $param = array('getByIdRequest' => array('id' => $id));
         if ($result = $this->call('getById', $param)) {
-          $article_array = array();
+          $fields = array();
           if (!is_array($result)) {
             $this->throwError($result);
           }
           else {
+            $article = $result['article'];
             foreach ($result['article']['articleFields']['articleField'] as $field) {
-
               // Fetch image url.
-              if ($field['name'] == 'afbeelding') {
+              if ($field['name'] == 'afbeelding' && !empty($field['value'])) {
                 $image_api = new TripolisImageService($this->client, $this->username, $this->password);
-                $article_array[$field['name']] = $image_api->getImageFromId($field['value']);
+                $fields[$field['name']] = $image_api->getImageFromId($field['value']);
                 continue;
               }
 
               // Set field value.
-              $article_array[$field['name']] = $field['value'];
+              $fields[$field['name']] = $field['value'];
             }
 
-            return $article_array;
+            // Combine fetched fields into article.
+            $article['fields'] = $fields;
+            return $article;
+          }
+        }
+      }
+      catch (SoapFault $e) {
+        $this->throwError($e);
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * Get articles meta-data based on workspace ID.
+   *
+   * To fetch whole article (all fields), do so by calling
+   * getById().
+   *
+   * Be aware that the result set might contain any type
+   * of article, so fields might differ between articles.
+   *
+   * Be aware that this might fetch A LOT.
+   * First, a paginated list is fetched for the workspace,
+   * containing meta-data for all articles.
+   *
+   * @param string $id
+   *   The workspace id from Tripolis.
+   *
+   * @return mixed
+   *   Article array or FALSE on failure.
+   */
+  public function getByWorkspaceId($id) {
+    if (!empty($id)) {
+      try {
+        // Fetch list of articles (meta data).
+        $param = array('getByWorkspaceIdRequest' => array('workspaceId' => $id));
+        if ($result = $this->pagedSoapCall('getByWorkspaceId', $param, 1000)) {
+          if (!is_array($result)) {
+            $this->throwError($result);
+          }
+          else {
+            return $result['articles']['article'];
+          }
+        }
+      }
+      catch (SoapFault $e) {
+        $this->throwError($e);
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * Get articles based on newsletter ID.
+   *
+   * Be aware that the result set might contain any type
+   * of article, so fields might differ between articles.
+   *
+   * @param string $id
+   *   The workspace id from Tripolis.
+   *
+   * @return mixed
+   *   Article array or FALSE on failure.
+   */
+  public function getByNewsletterId($id) {
+    if (!empty($id)) {
+      try {
+        // Fetch list of articles (meta data).
+        $param = array('getByNewsletterIdRequest' => array('newsletterId' => $id));
+        if ($result = $this->pagedSoapCall('getByNewsletterId', $param, 200)) {
+          if (!is_array($result)) {
+            $this->throwError($result);
+          }
+          else {
+            // Fetch articles per piece.
+            $articles = array();
+            foreach ($result['articles']['article'] as $article_meta) {
+              if ($article = $this->getById($article_meta['id'])) {
+                $articles[] = $article;
+              }
+            }
+            return $articles;
           }
         }
       }
@@ -87,7 +169,7 @@ class TripolisArticleService extends TripolisAPISoap {
       $field_values = array();
       foreach ($content['fields'] as $key => $value) {
         $field_values[] = array(
-          'key' => $key,
+          'key'   => $key,
           'value' => $value,
         );
       }
@@ -95,10 +177,10 @@ class TripolisArticleService extends TripolisAPISoap {
       // Set soap params.
       $param = array(
         'createRequest' => array(
-          'articleTypeId' => $content['articleTypeId'],
-          'label' => $this->trimLength($content['label']),
-          'name' => $this->trimLength($content['name']),
-          'articleTagIds' => $content['articleTagIds'],
+          'articleTypeId'      => $content['articleTypeId'],
+          'label'              => $this->trimLength($content['label']),
+          'name'               => $this->trimLength($content['name']),
+          'articleTagIds'      => $content['articleTagIds'],
           'articleFieldValues' => array(
             'articleFieldValue' => $field_values,
           ),
@@ -121,10 +203,11 @@ class TripolisArticleService extends TripolisAPISoap {
               // Check label and name field.
               if ($error->errorCode == '401') {
                 if (($error->identifierName == 'label' &&
-                  $error->message == 'label already exists') ||
+                    $error->message == 'label already exists') ||
                   ($error->errorCode == '401' &&
                     $error->identifierName == 'name' &&
-                    $error->message == 'name already exists')) {
+                    $error->message == 'name already exists')
+                ) {
 
                   // Execute next cycle, to check and resend.
                   $retry = TRUE;
@@ -173,7 +256,7 @@ class TripolisArticleService extends TripolisAPISoap {
     $param = array(
       'createTagRequest' => array(
         'workspaceId' => $this->workspaceId,
-        'tag' => strtolower($tag),
+        'tag'         => strtolower($tag),
       ),
     );
     $result = $this->call('createTag', $param);

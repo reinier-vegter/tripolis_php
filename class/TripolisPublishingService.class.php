@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Class to interact with Publishing Service.
+ * Class to interact with Publishing Service (fetch mailing jobs etc).
  */
 
 /**
@@ -25,12 +25,11 @@ class TripolisPublishingService extends TripolisAPISoap {
   }
 
   /**
-   * Get fields based on article workspace ID.
+   * Get mailing-jobs based on workspace ID.
    *
    * @param string $id
    *   The workspace id from Tripolis.
-   *
-   * @param string $id
+   * @param string $status
    *   The Status of the jobs.
    *
    * @return mixed

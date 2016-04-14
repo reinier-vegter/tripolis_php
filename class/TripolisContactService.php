@@ -61,6 +61,39 @@ class TripolisContactService extends TripolisAPISoap {
   }
 
   /**
+   * Delete contact based on ID.
+   *
+   * @param string $id
+   *   Contact ID.
+   *
+   * @return string|bool
+   *   New user ID, or FALSE
+   *   on failure.
+   */
+  public function delete($id) {
+    if (!empty($this->dbId)) {
+      try {
+        // Set Soap body params.
+        $param = array(
+          'deleteRequest' => array(
+            'id' => $id,
+          ),
+        );
+        // Call API.
+        $result = $this->call('delete', $param);
+        if (isset($result['id'])) {
+          return $result['id'];
+        }
+      }
+      catch (SoapFault $e) {
+        $this->throwError($e);
+      }
+    }
+
+    return FALSE;
+  }
+
+  /**
    * Retrieve all contact groups based on database ID.
    *
    * @param array $param
