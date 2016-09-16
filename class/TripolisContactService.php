@@ -48,7 +48,7 @@ class TripolisContactService extends TripolisAPISoap {
         );
         // Call API.
         $result = $this->call('create', $param);
-        if (isset($result['id'])) {
+        if (is_array($result) && isset($result['id'])) {
           return $result['id'];
         }
       }
