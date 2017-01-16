@@ -76,4 +76,4 @@ When working with the Tripolis API, it is recommended to gather some insight on 
 On first glance the content structure of Tripolis seems somewhat tricky. Some helpful tips to get you on the way are in the list below. This will help you to understand why certain classes exist in this library.
 
  - Contacts live in contact groups - this means that when adding a contact you should have an id of the contact group you want to add the contact to;
- - Content (articles and images) live in workspaces - this means when adding an article you should have an id of the workspace you want to add the article to. The tricky part in this case is that you will first need the workspace id to gather article types. Then, with the wanted article type id, you can add the article to the workspace.
+ - Content (articles and images) lives in workspaces - this means when adding an article you should have an id of the workspace you want to add the article to. The tricky part in this case is that you will first need the workspace id to gather article types. Then, with the wanted article type id, you can add the article to the workspace.
